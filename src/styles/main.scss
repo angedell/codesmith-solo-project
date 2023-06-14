@@ -1,0 +1,119 @@
+@import "~bootstrap/scss/bootstrap";
+
+$primary-color: #0480c9;
+$genWidth : 500px;
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background: $primary-color;
+    color: white;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+
+}
+
+
+#container {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+}
+
+.TDsend {
+    background: rgba(255, 255, 255, 0.5);
+    width: 250px;
+    height: 130px;
+    display: flex;
+    flex-direction: row;
+    align-items:last baseline;
+    padding: 20px;
+    border-radius: 5px;
+    width: $genWidth;  
+    justify-content: space-around;
+
+    input {
+        width: 130%;
+        padding: 10px;
+        margin-right: 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        border-color: white;
+    }
+    button {
+        padding: 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        border-color: white;
+    }
+    
+}
+
+.todoItems {
+   margin-top: 90px;
+}
+
+ 
+
+.sendUnit {
+    padding-top: 20px;
+}
+
+
+.Header {
+padding: 20px;
+height: 100px;
+display: flex;
+flex-direction: row;
+justify-content: center;
+    input {
+        width: 190px;
+        padding: 10px;
+        margin-right: 10px;
+        font-size: 1rem;
+        border-radius: 5px;
+        border-color: white;
+    }
+}
+
+
+.TDlist {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.icon {
+    width: 30px;
+    height: 30px;
+  &:hover {
+    cursor: pointer;
+  }
+  &:active {
+    cursor: pointer;
+    scale: 0.9;
+  }
+}
+
+
+.todoItem {
+    background: rgba(255, 255, 255, 0.9);
+        width: $genWidth;
+
+}
+    .completed {
+        text-decoration: line-through;
+    }
+
+
+.prov {
+    background: rgba(255, 255, 255, 0.5);
+
+}
+    
