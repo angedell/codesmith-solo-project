@@ -1,4 +1,11 @@
 const express = require('express');
+const session = require('express-session');
+
+const sessionMiddleware = session({
+  secret: 'Yyhf$Rj?G?ERbHGx5sBRdTANDS6hrY',
+  resave: false,
+  saveUninitialized: false,
+});
 
 const app = express();
 // const cors = require('cors')
@@ -10,26 +17,121 @@ const server = http.createServer(app);
 const { PrismaClient } = require('@prisma/client');
 
 const io = new Server(server, {
-  // cors: {
-  //   origin: process.env.WEB_APP_ENDPOINT,
-  //   methods: ["GET", "POST"],
-  // },
+  cookie: true,
 });
+
+
+const todoRouter = require('./router/todo');
+
+
+io.engine.use(sessionMiddleware);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const prisma = new PrismaClient();
 
-app.get('/', (req, res) => {
-  res.send('Welcome to chat backend service!');
-});
+app.use('/todo', todoRouter);
 
-io.on('connection', (socket) => {
-  console.log('connected', socket.id);
-  socket.on('chat', (data) => {
-    console.log(data);
-    io.emit('chat', data);
+io.on('connection', async (socket) => {
+  const socketId = socket.id;
+  // console.log('connected', socketId);
+
+  try {
+    const existingTodos = await prisma.todo.findMany({
+      where: {
+        DeletedOn: null,
+      },
+      orderBy: {
+        CreatedOn: 'asc',
+      },
+    });
+    socket.emit('hello', existingTodos);
+  } catch (err) {
+    console.log(err);
+  }
+
+  socket.on('ItypingTodo', (data) => {
+    const cookie = socket.handshake.headers.cookie;
+    socket.broadcast.emit('aTodoTyped', {...data, cookie});
+  });
+
+  socket.on('IcreateTodo', async (data) => {
+    const cookie = socket.handshake.headers.cookie;
+    const { title, author } = data.sendtodo;
+    try {
+      const todoEnt = await prisma.todo.create({
+        data: {
+          title,
+          author,
+        },
+      });
+
+      socket.broadcast.emit('aTodoCreated', {...todoEnt, cookie});
+    } catch (err) {
+      socket.emit('createError', 'got an error trying to create your todo');
+    }
+  });
+
+  socket.on('IcompleteTodo', async (data) => {
+    if (data) {
+      const todoUpdate = await prisma.todo.update({
+        where: {
+          id: data,
+        },
+        data: {
+          CompletedOn: new Date(),
+        },
+      });
+      socket.broadcast.emit('aTodoCompleted', data);
+      console.log('aTodoCompleted', todoUpdate);
+    }
+  });
+
+  socket.on('IdeleteTodo', async (data) => {
+    if (data) {
+      const todoDelete = await prisma.todo.update({
+        where: {
+          id: data,
+        },
+        data: {
+          DeletedOn: new Date(),
+        },
+      });
+      socket.broadcast.emit('aTodoDeleted', data);
+
+      console.log('deleteTodo', data);
+    }
+  });
+
+  socket.on('IupdateTodo', async (data) => {
+    if (data.decomplete) {
+      const todoDelete = await prisma.todo.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          title: data.title,
+          CompletedOn: null,
+        },
+      });
+    } else {
+      const todoDelete = await prisma.todo.update({
+        where: {
+          id: data.id,
+        },
+        data: {
+          title: data.title,
+        },
+      });
+    }
+
+    console.log('IupdateTodo', data);
+    socket.broadcast.emit('aTodoUpdated', data);
+  });
+
+  socket.on('newUsername', (data) => {
+    console.log('newUsername', data);
   });
 });
 

@@ -6,6 +6,7 @@ const { getAllTodos, createTodo } = require('../controller/todoController');
 router.get('/', 
   getAllTodos,
   (req, res) => {
+    console.log("someone is asking for all posts!")
     if (res.locals.todos) {
       res.status(200).json(res.locals.todos);
     } else {

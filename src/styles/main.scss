@@ -38,7 +38,7 @@ body {
     justify-content: space-around;
 
     input {
-        width: 130%;
+        width: 120%;
         padding: 10px;
         margin-right: 10px;
         font-size: 1rem;
@@ -85,7 +85,7 @@ justify-content: center;
 .TDlist {
     padding: 20px;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
 }
 
 
@@ -107,10 +107,14 @@ justify-content: center;
         width: $genWidth;
 
 }
-    .completed {
-        text-decoration: line-through;
-    }
+.completed {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
 
+.deleted {
+    display: none;
+}
 
 .prov {
     background: rgba(255, 255, 255, 0.5);
