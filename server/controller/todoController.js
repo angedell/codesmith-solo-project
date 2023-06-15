@@ -5,9 +5,6 @@ const prisma = new PrismaClient();
 const todoController = {
   getAllTodos: async (req, res, next) => {
     const todos = await prisma.todo.findMany({
-      where: {
-        CompletedOn: undefined,
-      },
       orderBy: {
         id: 'desc',
       },
@@ -53,7 +50,6 @@ const todoController = {
         title,
       },
     });
-    todo.save();
     return next();
   },
 };

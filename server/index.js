@@ -1,4 +1,5 @@
 const express = require('express');
+const { PrismaClient } = require('@prisma/client');
 
 const app = express();
 const http = require('http');
@@ -8,6 +9,8 @@ const { Server } = require('socket.io');
 const todoRouter = require('./router/todo');
 
 const io = new Server(server);
+
+const prisma = new PrismaClient();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -22,8 +25,29 @@ io.on('connection', (socket) => {
     io.emit('TodoToBe', msg);
   });
 
-  socket.on('hello', (msg) => {
-    console.log('Received message:', msg);
+  socket.on('todoCompleted', async (msg) => {
+    // Broadcast the message to all connected clients
+
+    const todo = await prisma.todo.update({
+      where: {
+        id: msg.id,
+      },
+      data: {
+        CompletedOn: new Date(),
+      },
+    });
+  });
+
+  socket.on('newTodo', async (msg) => {
+    const { title, author } = msg;
+    // console.log(title)
+    const todoEnt = await prisma.todo.create({
+      data: {
+        title,
+        author,
+      },
+    });
+    // todoEnt.save();
   });
 
   // Handle disconnection

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card, CardBody, CardSubtitle, CardImg, CardText, CardTitle,
 } from 'reactstrap';
@@ -16,7 +16,14 @@ function Todo(props) {
   const {
     title, author, CreatedOn, CompletedOn, id,
   } = props.todo;
-  const { toBe } = props;
+  const { toBe, socket } = props;
+
+  useEffect(() => {
+    if (CompletedOn !== null) {
+      console.log('completedOn ', CompletedOn);
+      setCompleted(true);
+    }
+  }, []);
 
   TimeAgo.addLocale(en);
   const timeAgo = new TimeAgo('en-US');
@@ -24,12 +31,12 @@ function Todo(props) {
 
   const subtitleTest = toBe ? `not yet committed by ${author}` : `${formattedDate} by ${author}`;
   const placeholderClass = toBe ? 'prov' : '';
-  const completedClass = completed ? 'completed' : '';
-  
+  const completedClass = CompletedOn || completed ? 'completed' : '';
+
   function handleClick(action) {
     // console.log(action);
     if (action === 'complete') {
-      dispatch(completeTodo(id));
+      socket.emit('todoCompleted', { id });
       setCompleted(true);
     }
     if (action === 'edit') {
@@ -43,8 +50,8 @@ function Todo(props) {
   const buttons = [];
   if (!toBe) {
     buttons.push(<CardImg onClick={() => handleClick('complete')} className="icon" src={checkmark} height="30px" alt="mark completed" />);
-    buttons.push(<CardImg onClick={() => handleClick('edit')} className="icon"  src={edit} height="30px" alt="edit" />);
-    buttons.push(<CardImg onClick={() => handleClick('delete')} className="icon"  src={deleteBin} height="30px" alt="delete" />);
+    buttons.push(<CardImg onClick={() => handleClick('edit')} className="icon" src={edit} height="30px" alt="edit" />);
+    buttons.push(<CardImg onClick={() => handleClick('delete')} className="icon" src={deleteBin} height="30px" alt="delete" />);
   }
 
   return (

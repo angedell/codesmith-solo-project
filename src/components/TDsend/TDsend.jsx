@@ -15,18 +15,7 @@ function TDsend({ socket }) {
 
   function send() {
     if (todo !== '') {
-      const newTodo = {
-        title: todo,
-        author,
-      };
-      console.log(newTodo);
-      fetch('/todo', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTodo),
-      });
+      socket.emit('newTodo', {title: todo, author, id: socket.id, CreatedOn: new Date().toISOString()});
       setTodo('');
     }
   }
@@ -34,8 +23,7 @@ function TDsend({ socket }) {
   return (
     <div className="TDsend">
       <div className="m-3 sendUnit">
-        <Label for="todoTitle" className="form-label">your todo</Label>
-        <Input onChange={todoTyping} type="text" className="form-control" id="todoTitle" placeholder="your todo" value={todo} />
+        <Input onChange={todoTyping} type="text" className="form-control" id="todoTitle" placeholder="what does need to be done?" value={todo} />
       </div>
       <div className="m-3 sendUnit">
         <Button color="success" onClick={send}>Send</Button>
