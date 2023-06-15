@@ -1,15 +1,21 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { setAuthor } from "../../reducers/todoReducer.js";
+import React, { useState } from "react";
+import { useSelector,useDispatch } from "react-redux";
+import { setName } from "../../store/userSlicer.js";
+
 import smile from "../../assets/smile.svg";
 
 const Header = () =>{ 
-  const dispatch = useDispatch()
-  const author = useSelector(state => state.todos.author);
-    
+    const dispatch = useDispatch();
+    const [username, setUsername] = useState("");
+
+    function newUsername(e){
+        dispatch(setName(username))
+    }
+
+
   return(
     <div className="Header">
-      <input onChange={e => dispatch(setAuthor(e.target.value))} type="text" id="userName" placeholder="your name" value={author} />
+      <input type="text" value={username} onBlur={newUsername} onChange={(e) => setUsername(e.target.value)} placeholder="your name"/>
       <img id="moji" src={smile} alt="smile" />
 </div>
 )}

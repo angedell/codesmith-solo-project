@@ -1,23 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Label, Input } from 'reactstrap';
-import { useDispatch, useSelector } from 'react-redux';
 
-function TDsend({ socket }) {
+
+function TDsend() {
   const [todo, setTodo] = useState('');
-  const author = useSelector((state) => state.todos.author);
+
 
   function todoTyping(e) {
-    socket.emit('todoTyping', {
-      title: e.target.value, author, id: socket.id, CreatedOn: new Date().toISOString(),
-    });
+
     return setTodo(e.target.value);
   }
 
   function send() {
-    if (todo !== '') {
-      socket.emit('newTodo', {title: todo, author, id: socket.id, CreatedOn: new Date().toISOString()});
-      setTodo('');
-    }
+
   }
 
   return (
